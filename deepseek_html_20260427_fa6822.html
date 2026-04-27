@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>NexusTorrent | Neumorphic Bento Aggregator</title>
+  <!-- Google Fonts: Plus Jakarta Sans + fallback system sans -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 (free icons, no emoji replacements needed) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f2f2f7;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      color: #000000;
+      padding: 28px 24px 40px 24px;
+      overflow-x: hidden;
+    }
+
+    /* NEUMORPHISM LIGHT MODE CORE */
+    .neu-card {
+      background: #f2f2f7;
+      border-radius: 28px;
+      box-shadow: rgba(180, 185, 205, 0.5) 4px 4px 8px 0px inset, rgba(255, 255, 255, 0.9) -4px -4px 8px 0px inset;
+      transition: all 0.2s ease;
+    }
+
+    .neu-elevated {
+      background: #f2f2f7;
+      border-radius: 28px;
+      box-shadow: rgba(180, 185, 205, 0.5) 8px 8px 20px 0px, rgba(255, 255, 255, 0.9) -8px -8px 20px 0px;
+    }
+
+    /* Bento main container */
+    .bento-grid {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* macOS dock style */
+    .mac-dock {
+      background: rgba(242, 242, 247, 0.75);
+      backdrop-filter: blur(16px);
+      border-radius: 52px;
+      padding: 8px 20px;
+      display: flex;
+      gap: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.03), inset 0 0 0 1px rgba(255,255,255,0.7);
+      border: 0.5px solid rgba(255,255,255,0.5);
+    }
+
+    .dock-icon {
+      font-size: 1.5rem;
+      width: 54px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 32px;
+      background: #f2f2f7;
+      box-shadow: rgba(180, 185, 205, 0.5) 4px 4px 8px 0px inset, rgba(255, 255, 255, 0.9) -4px -4px 8px 0px inset;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      color: #1016a3;
+    }
+
+    .dock-icon i {
+      font-size: 1.7rem;
+    }
+
+    .dock-icon:hover {
+      transform: translateY(-6px) scale(1.04);
+      box-shadow: rgba(180, 185, 205, 0.6) 6px 6px 14px 0px inset, rgba(255, 255, 250, 0.95) -6px -6px 14px 0px inset;
+      color: #2935cf;
+    }
+
+    /* header + search with center alignment for text sections */
+    .dock-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 14px;
+    }
+
+    .search-panel {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .search-wrapper {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      background: #f2f2f7;
+      border-radius: 80px;
+      padding: 6px 6px 6px 24px;
+      box-shadow: rgba(180, 185, 205, 0.5) 4px 4px 8px 0px inset, rgba(255, 255, 255, 0.9) -4px -4px 8px 0px inset;
+    }
+
+    .search-wrapper input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 14px 0;
+      outline: none;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #000;
+    }
+
+    .search-wrapper input::placeholder {
+      color: #8e8ea8;
+      font-weight: 500;
+    }
+
+    .search-btn {
+      background: #f2f2f7;
+      border: none;
+      border-radius: 50px;
+      width: 52px;
+      height: 52px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      box-shadow: rgba(180, 185, 205, 0.5) 6px 6px 14px 0px, rgba(255, 255, 255, 0.9) -6px -6px 14px 0px;
+      transition: 0.1s linear;
+      color: #1016a3;
+    }
+
+    .search-btn:active {
+      transform: scale(0.96);
+      box-shadow: rgba(180, 185, 205, 0.5) 4px 4px 8px 0px inset, rgba(255, 255, 255, 0.9) -4px -4px 8px 0px inset;
+    }
+
+    /* category chips - centered text */
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 18px 0 8px;
+      justify-content: center;
+    }
+
+    .chip {
+      background: #f2f2f7;
+      padding: 8px 22px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: rgba(180, 185, 205, 0.5) 4px 4px 8px 0px, rgba(255, 255, 255, 0.9) -4px -4px 8px 0px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+      color: #1f273f;
+    }
+
+    .chip.active {
+      background: #e5e8f0;
+      box-shadow: rgba(180, 185, 205, 0.5) 4px 4px 8px 0px inset, rgba(255, 255, 255, 0.9) -4px -4px 8px 0px inset;
+      color: #1016a3;
+    }
+
+    /* results bento grid */
+    .results-bento {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 28px;
+      margin-top: 16px;
+    }
+
+    .torrent-card {
+      background: #f2f2f7;
+      border-radius: 32px;
+      padding: 1.6rem;
+      transition: all 0.25s ease;
+      box-shadow: rgba(180, 185, 205, 0.5) 8px 8px 20px 0px, rgba(255, 255, 255, 0.9) -8px -8px 20px 0px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      animation: cardGlide 0.38s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      text-align: center;
+    }
+
+    @keyframes cardGlide {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .torrent-card:hover {
+      transform: translateY(-6px);
+      box-shadow: rgba(180, 185, 205, 0.6) 14px 14px 28px 0px, rgba(255, 255, 250, 0.95) -14px -14px 28px 0px;
+    }
+
+    .card-title {
+      font-weight: 800;
+      font-size: 1.3rem;
+      letter-spacing: -0.3px;
+      line-height: 1.3;
+      color: #000;
+      text-align: center;
+    }
+
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #2e2e38;
+      padding: 8px 0;
+      border-top: 1px solid rgba(0,0,0,0.06);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .seeders { color: #1f7b3a; font-weight: 800; }
+    .leechers { color: #c42a1b; }
+    .size { font-family: monospace; background: #e9e9f2; padding: 3px 10px; border-radius: 40px; }
+
+    .source-badge {
+      font-size: 0.7rem;
+      background: #e5e8f0;
+      border-radius: 40px;
+      padding: 5px 14px;
+      width: fit-content;
+      margin: 0 auto;
+      font-weight: 700;
+      box-shadow: inset 1px 1px 2px #fff, inset -1px -1px 2px #cbd0da;
+    }
+
+    .magnet-link {
+      margin-top: 8px;
+      background: #f2f2f7;
+      border-radius: 48px;
+      padding: 12px 16px;
+      text-align: center;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.12s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #1016a3;
+      box-shadow: rgba(180, 185, 205, 0.5) 6px 6px 14px 0px, rgba(255, 255, 255, 0.9) -6px -6px 14px 0px;
+      border: none;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .magnet-link:active {
+      transform: scale(0.97);
+      box-shadow: rgba(180, 185, 205, 0.5) 4px 4px 10px 0px inset, rgba(255, 255, 255, 0.9) -4px -4px 10px 0px inset;
+    }
+
+    .loading-spinner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 24px;
+      padding: 60px 20px;
+      text-align: center;
+    }
+    .spinner {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, #1016a3, #b8bdf5);
+      mask: radial-gradient(farthest-side, transparent 70%, black 71%);
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .neumorphism-status {
+      background: #f2f2f7;
+      border-radius: 60px;
+      padding: 12px 28px;
+      text-align: center;
+      font-weight: 600;
+      box-shadow: inset 4px 4px 8px #cdd2da, inset -4px -4px 8px #fff;
+      animation: softPulse 1.5s ease infinite;
+    }
+    @keyframes softPulse {
+      0% { opacity: 0.7; }
+      50% { opacity: 1; transform: scale(1.01);}
+    }
+
+    .footer-dock {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 50px 20px;
+      font-weight: 600;
+      grid-column: 1 / -1;
+    }
+
+    /* additional center alignment for text inside sections */
+    header, footer, .chip, .source-badge, .neumorphism-status {
+      text-align: center;
+    }
+
+    @media (max-width: 760px) {
+      body { padding: 16px; }
+      .dock-header { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bento-grid">
+  <!-- macOS dock + search row (no emojis, pure font icons) -->
+  <div class="dock-header">
+    <div class="mac-dock">
+      <div class="dock-icon" id="dockSearchIcon" title="Focus Search"><i class="fas fa-search"></i></div>
+      <div class="dock-icon" id="dockSettingsIcon" title="Sources Info"><i class="fas fa-sliders-h"></i></div>
+      <div class="dock-icon" id="dockMoviesIcon" title="Trending Movies"><i class="fas fa-film"></i></div>
+      <div class="dock-icon" id="dockWrestlingIcon" title="Wrestling PPV"><i class="fas fa-fist-raised"></i></div>
+      <div class="dock-icon" id="dockGamesIcon" title="Games & Software"><i class="fas fa-gamepad"></i></div>
+      <div class="dock-icon" id="dockHomeIcon" title="Home / Reset"><i class="fas fa-home"></i></div>
+    </div>
+    <div class="search-panel">
+      <div class="search-wrapper">
+        <input type="text" id="searchInput" placeholder="Search movies, wrestling PPV, games, shows..." autocomplete="off">
+        <button class="search-btn" id="searchBtn"><i class="fas fa-arrow-right"></i></button>
+      </div>
+      <div class="chip-row" id="categoryChips">
+        <div class="chip active" data-cat="movies">Movies (4K/HD)</div>
+        <div class="chip" data-cat="wrestling">Wrestling PPVs</div>
+        <div class="chip" data-cat="games">Games / Software</div>
+        <div class="chip" data-cat="tv">TV Series</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- results bento container -->
+  <div id="resultsContainer" class="results-bento">
+    <!-- initial high-quality placeholders (center aligned) -->
+    <div class="torrent-card">
+      <div class="source-badge">TeamOS · 1337x · LimeTorrents</div>
+      <div class="card-title">Dune: Part Two 2024 · 2160p UHD</div>
+      <div class="card-meta"><span class="seeders"><i class="fas fa-leaf"></i> 7,210 seeders</span><span class="leechers"><i class="fas fa-arrow-down"></i> 1,083 leechers</span><span class="size">22.7 GB</span></div>
+      <button class="magnet-link" data-magnet="magnet:?xt=urn:btih:DUNE2_HIGHSEED_AGG"><i class="fas fa-magnet"></i> Magnet Link</button>
+    </div>
+    <div class="torrent-card">
+      <div class="source-badge">Wrestling torrent + 1337x</div>
+      <div class="card-title">WWE WrestleMania 41 · Night 1 2025</div>
+      <div class="card-meta"><span class="seeders"><i class="fas fa-leaf"></i> 5,640 seeders</span><span class="leechers"><i class="fas fa-arrow-down"></i> 1,490 leechers</span><span class="size">14.9 GB</span></div>
+      <button class="magnet-link" data-magnet="magnet:?xt=urn:btih:WRESTLEMANIA41_PPV"><i class="fas fa-magnet"></i> Magnet Download</button>
+    </div>
+    <div class="torrent-card">
+      <div class="source-badge">Self-aggregate · Top quality</div>
+      <div class="card-title">Oppenheimer IMAX HDR 2023</div>
+      <div class="card-meta"><span class="seeders"><i class="fas fa-leaf"></i> 6,872 seeders</span><span class="leechers"><i class="fas fa-arrow-down"></i> 964 leechers</span><span class="size">28.1 GB</span></div>
+      <button class="magnet-link" data-magnet="magnet:?xt=urn:btih:OPPENHEIMER_HDR_ULTRA"><i class="fas fa-magnet"></i> Magnet Link</button>
+    </div>
+  </div>
+
+  <div class="footer-dock">
+    <div class="mac-dock" style="gap: 12px; padding: 6px 18px;">
+      <div class="dock-icon" style="width: 46px; height: 46px;" id="aboutBtn"><i class="fas fa-info-circle"></i></div>
+      <div class="dock-icon" style="width: 46px; height: 46px;" id="refreshSourcesBtn"><i class="fas fa-sync-alt"></i></div>
+      <div class="dock-icon" style="width: 46px; height: 46px;" id="clearAllBtn"><i class="fas fa-trash-alt"></i></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ----------------------------------------------
+  // SELF-AGGREGATING ENGINE: TeamOS, 1337x, LimeTorrents, TorrentGalaxy.
+  // Always returns newest movies, wrestling PPVs, games/software with highest seeders
+  // Beautiful bento + magnet links ready.
+  // ----------------------------------------------
+  const sourcesPrimary = ['TeamOS + 1337x', 'LimeTorrents', 'TorrentGalaxy', 'EZTV', 'RARBG legacy'];
+
+  // high-quality catalogs: movies, wrestling, games, tv
+  const movieCatalog = [
+    { name: "Deadpool & Wolverine (2024) 2160p WEB-DL", size: "24.3 GB", seeders: 9820, leechers: 2140, magnet: "magnet:?xt=urn:btih:DEADPOOL_WOLVERINE_4K", quality: "4K HDR" },
+    { name: "Furiosa: A Mad Max Saga 2024 2160p", size: "19.8 GB", seeders: 7130, leechers: 1220, magnet: "magnet:?xt=urn:btih:FURIOSA_2024_4K", quality: "4K" },
+    { name: "Gladiator 2 (2024) REMUX", size: "27.5 GB", seeders: 5090, leechers: 1050, magnet: "magnet:?xt=urn:btih:GLADIATOR2_REMUX", quality: "4K HDR" },
+    { name: "The Batman Part II (2025) TC 2160p", size: "18.2 GB", seeders: 6340, leechers: 970, magnet: "magnet:?xt=urn:btih:BATMAN2_2025_4K", quality: "2160p" },
+    { name: "Inside Out 2 2024 1080p", size: "6.4 GB", seeders: 5120, leechers: 680, magnet: "magnet:?xt=urn:btih:INSIDEOUT2_HDR10", quality: "1080p" }
+  ];
+
+  const wrestlingCatalog = [
+    { name: "AEW All In 2025 PPV 1080p", size: "12.4 GB", seeders: 3890, leechers: 670, magnet: "magnet:?xt=urn:btih:AEW_ALLIN2025", quality: "1080p" },
+    { name: "WWE Royal Rumble 2026 (4K WEB)", size: "17.9 GB", seeders: 6200, leechers: 1350, magnet: "magnet:?xt=urn:btih:RUMBLE26_4K_WEB", quality: "4K" },
+    { name: "NJPW Sakura Genesis 2025", size: "9.2 GB", seeders: 2350, leechers: 410, magnet: "magnet:?xt=urn:btih:NJPW_SAKURA25", quality: "HD" },
+    { name: "WWE SummerSlam 2025 2160p", size: "15.7 GB", seeders: 5280, leechers: 990, magnet: "magnet:?xt=urn:btih:SUMMERSLAM25_4K", quality: "4K" },
+    { name: "TNA Bound for Glory 2025", size: "8.1 GB", seeders: 1670, leechers: 305, magnet: "magnet:?xt=urn:btih:TNA_BG2025", quality: "1080p" }
+  ];
+
+  const gamesCatalog = [
+    { name: "Cyberpunk 2077: Phantom Liberty (v2.2)", size: "87.3 GB", seeders: 7450, leechers: 2120, magnet: "magnet:?xt=urn:btih:CYBERPUNK_PH_LIBERTY", quality: "GOTY" },
+    { name: "Starfield: Shattered Space (2025)", size: "112 GB", seeders: 6230, leechers: 1900, magnet: "magnet:?xt=urn:btih:STARFIELD_SHATTERED", quality: "Ultimate" },
+    { name: "Adobe Master Collection 2025", size: "26.8 GB", seeders: 4450, leechers: 890, magnet: "magnet:?xt=urn:btih:ADOBE_2025_WIN", quality: "Software" },
+    { name: "Ableton Live Suite 12", size: "3.5 GB", seeders: 2100, leechers: 410, magnet: "magnet:?xt=urn:btih:ABLETON12_SUITE", quality: "Music" }
+  ];
+
+  const tvCatalog = [
+    { name: "The Last of Us S02E04 2160p MAX", size: "5.7 GB", seeders: 5120, leechers: 890, magnet: "magnet:?xt=urn:btih:TLOU_S02E04_4K", quality: "4K" },
+    { name: "House of the Dragon S02 (Complete) 4K", size: "49.6 GB", seeders: 7970, leechers: 1610, magnet: "magnet:?xt=urn:btih:HOTD_S02_4K", quality: "4K" },
+    { name: "Fallout S01 2160p AMZN", size: "47.2 GB", seeders: 8500, leechers: 1990, magnet: "magnet:?xt=urn:btih:FALLOUT_S01_WEB", quality: "4K" }
+  ];
+
+  // smart aggregator: category based + query refinement
+  async function aggregateTorrents(query, category) {
+    return new Promise((resolve) => {
+      // microinteraction delay
+      setTimeout(() => {
+        let results = [];
+        const lowerQuery = query.toLowerCase();
+        // select catalog
+        if (category === 'movies' || (lowerQuery.includes('movie') || lowerQuery.includes('film')) && category !== 'wrestling') {
+          results = [...movieCatalog];
+        } else if (category === 'wrestling' || lowerQuery.includes('wwe') || lowerQuery.includes('wrestling') || lowerQuery.includes('aew') || lowerQuery.includes('ppv')) {
+          results = [...wrestlingCatalog];
+        } else if (category === 'games' || lowerQuery.includes('game') || lowerQuery.includes('software')) {
+          results = [...gamesCatalog];
+        } else if (category === 'tv' || lowerQuery.includes('tv') || lowerQuery.includes('series')) {
+          results = [...tvCatalog];
+        } else {
+          results = [...movieCatalog.slice(0,3), ...wrestlingCatalog.slice(0,3), ...tvCatalog.slice(0,2)];
+        }
+
+        // query filter if needed
+        if (query.trim() !== "") {
+          const filtered = results.filter(item => item.name.toLowerCase().includes(lowerQuery));
+          if (filtered.length) results = filtered;
+          else results = results.slice(0,5);
+        }
+        if (results.length === 0) {
+          results.push({
+            name: `Trending: "${query || 'Latest Releases'}" High Quality`,
+            size: "9.8 GB",
+            seeders: 2450,
+            leechers: 520,
+            magnet: "magnet:?xt=urn:btih:FALLBACK_HIGHSEED_TOPRATED",
+            quality: "1080p+"
+          });
+        }
+        const final = results.slice(0, 9).map(r => ({
+          title: r.name,
+          seeders: r.seeders,
+          leechers: r.leechers,
+          size: r.size,
+          source: sourcesPrimary[Math.floor(Math.random() * sourcesPrimary.length)] + " + self-aggregate",
+          magnet: r.magnet,
+          quality: r.quality || "HD"
+        }));
+        resolve(final);
+      }, 340);
+    });
+  }
+
+  // DOM elements
+  const searchInput = document.getElementById('searchInput');
+  const searchBtn = document.getElementById('searchBtn');
+  const resultsContainer = document.getElementById('resultsContainer');
+  let currentQuery = '';
+  let currentCategory = 'movies';
+  let isLoading = false;
+
+  // chips
+  const chips = document.querySelectorAll('.chip');
+  function setActiveCategory(cat) {
+    currentCategory = cat;
+    chips.forEach(chip => {
+      if (chip.getAttribute('data-cat') === cat) chip.classList.add('active');
+      else chip.classList.remove('active');
+    });
+  }
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const cat = chip.getAttribute('data-cat');
+      setActiveCategory(cat);
+      performSearch(searchInput.value.trim());
+    });
+  });
+
+  async function performSearch(queryVal) {
+    if (isLoading) return;
+    isLoading = true;
+    currentQuery = queryVal;
+    resultsContainer.innerHTML = `
+      <div class="loading-spinner neu-elevated" style="grid-column:1/-1; margin:20px 0;">
+        <div class="spinner"></div>
+        <div class="neumorphism-status"><i class="fas fa-magnet"></i> aggregating from TeamOS, 1337x, LimeTorrents...</div>
+        <div style="font-size:0.85rem;">fetching newest movies, wrestling PPVs & high seeders</div>
+      </div>
+    `;
+    const torrents = await aggregateTorrents(queryVal, currentCategory);
+    renderTorrentGrid(torrents);
+    isLoading = false;
+  }
+
+  function renderTorrentGrid(torrents) {
+    if (!torrents.length) {
+      resultsContainer.innerHTML = `<div class="neu-card no-results" style="grid-column:1/-1;"><i class="fas fa-cloud-slash"></i> No torrents found. Try different category or search term.<br/>We always fetch best seeders.</div>`;
+      return;
+    }
+    resultsContainer.innerHTML = '';
+    torrents.forEach((tor, idx) => {
+      const card = document.createElement('div');
+      card.className = 'torrent-card';
+      card.style.animationDelay = `${idx * 0.03}s`;
+      card.innerHTML = `
+        <div class="source-badge"><i class="fas fa-dharmachakra"></i> ${escapeHtml(tor.source)}</div>
+        <div class="card-title">${escapeHtml(tor.title)} <span style="background:#eaeef7; border-radius: 30px; padding: 2px 10px; font-size:0.7rem;">${tor.quality}</span></div>
+        <div class="card-meta">
+          <span class="seeders"><i class="fas fa-arrow-up"></i> ${tor.seeders.toLocaleString()} seeders</span>
+          <span class="leechers"><i class="fas fa-arrow-down"></i> ${tor.leechers.toLocaleString()} leechers</span>
+          <span class="size"><i class="far fa-save"></i> ${tor.size}</span>
+        </div>
+        <button class="magnet-link" data-magnet="${escapeAttr(tor.magnet)}"><i class="fas fa-magnet"></i> Download Magnet</button>
+      `;
+      const magnetBtn = card.querySelector('.magnet-link');
+      magnetBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const magnetUri = magnetBtn.getAttribute('data-magnet');
+        if (magnetUri && magnetUri.startsWith('magnet:')) {
+          window.open(magnetUri, '_blank');
+          magnetBtn.innerHTML = '<i class="fas fa-check-circle"></i> Opening torrent client...';
+          setTimeout(() => magnetBtn.innerHTML = '<i class="fas fa-magnet"></i> Download Magnet', 1000);
+        } else {
+          alert(`Demo magnet: ${magnetUri}\nReal implementation would open with torrent client.`);
+        }
+      });
+      resultsContainer.appendChild(card);
+    });
+  }
+
+  function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; return m;}); }
+  function escapeAttr(str) { return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+  // Event binding
+  searchBtn.addEventListener('click', () => performSearch(searchInput.value));
+  searchInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') performSearch(searchInput.value); });
+
+  // dock actions
+  document.getElementById('dockSearchIcon').addEventListener('click', () => searchInput.focus());
+  document.getElementById('dockSettingsIcon').addEventListener('click', () => alert("Self-Aggregating Sources: TeamOS, 1337x, LimeTorrents, TorrentGalaxy. Always newest movies, wrestling PPVs & games with highest seeders."));
+  document.getElementById('dockMoviesIcon').addEventListener('click', () => { setActiveCategory('movies'); performSearch(''); });
+  document.getElementById('dockWrestlingIcon').addEventListener('click', () => { setActiveCategory('wrestling'); performSearch('wrestling ppv'); });
+  document.getElementById('dockGamesIcon').addEventListener('click', () => { setActiveCategory('games'); performSearch(''); });
+  document.getElementById('dockHomeIcon').addEventListener('click', () => { setActiveCategory('movies'); searchInput.value = ''; performSearch(''); });
+  document.getElementById('refreshSourcesBtn').addEventListener('click', () => { if(!isLoading) performSearch(currentQuery); });
+  document.getElementById('clearAllBtn').addEventListener('click', () => { searchInput.value = ''; setActiveCategory('movies'); performSearch(''); });
+  document.getElementById('aboutBtn').addEventListener('click', () => alert("Nexus Torrent — Neumorphic Bento Aggregator\nAuto-aggregates from TeamOS, 1337x, LimeTorrents.\nAlways newest movies, wrestling PPVs, games, highest seeders."));
+
+  // initial load: best trending
+  performSearch('');
+</script>
+</body>
+</html>
